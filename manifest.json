@@ -1,0 +1,40 @@
+{
+  "manifest_version": 1,
+  "id": "wled-adapter",
+  "name": "WLED",
+  "short_name": "WLED",
+  "version": "0.1.0",
+  "description": "Connect your WLED (https://github.com/Aircoookie/WLED) lights",
+  "homepage_url": "https://github.com/tim-hellhake/wled-adapter#readme",
+  "license": "MPL-2.0",
+  "author": "Tim Hellhake",
+  "gateway_specific_settings": {
+    "webthings": {
+      "exec": "{nodeLoader} {path}",
+      "strict_min_version": "1.0.0",
+      "strict_max_version": "*",
+      "primary_type": "adapter"
+    }
+  },
+  "options": {
+    "default": {
+      "pollInterval": 1000
+    },
+    "schema": {
+      "type": "object",
+      "required": [
+        "pollInterval"
+      ],
+      "properties": {
+        "pollInterval": {
+          "type": "integer",
+          "title": "The number of milliseconds between two poll intervals (default is 1000ms)"
+        },
+        "useIpInsteadOfHostname": {
+          "type": "boolean",
+          "title": "Use the ip address instead of the hostname to contact the device"
+        }
+      }
+    }
+  }
+}

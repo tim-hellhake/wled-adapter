@@ -1,0 +1,47 @@
+{
+  "name": "wled-adapter",
+  "display_name": "WLED",
+  "version": "0.1.0",
+  "description": "Connect your WLED (https://github.com/Aircoookie/WLED) devices",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node generate-config-interfaces.js && tsc -p .",
+    "lint": "eslint src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tim-hellhake/wled-adapter.git"
+  },
+  "author": "Tim Hellhake",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/tim-hellhake/wled-adapter/issues"
+  },
+  "homepage": "https://github.com/tim-hellhake/wled-adapter#readme",
+  "files": [
+    "LICENSE",
+    "manifest.json",
+    "lib/brightness-property.js",
+    "lib/color-property.js",
+    "lib/index.js",
+    "lib/on-off-property.js",
+    "lib/wled-adapter.js",
+    "lib/wled-device.js"
+  ],
+  "dependencies": {
+    "dnssd": "^0.4.1",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/dnssd": "^0.4.1",
+    "@types/node-fetch": "^2.5.7",
+    "@types/ws": "^7.4.0",
+    "@typescript-eslint/eslint-plugin": "^4.11.0",
+    "@typescript-eslint/parser": "^4.11.0",
+    "eslint": "^7.16.0",
+    "gateway-addon": "^1.0.0",
+    "json-schema-to-typescript": "^10.0.2",
+    "typescript": "^4.1.2"
+  }
+}
