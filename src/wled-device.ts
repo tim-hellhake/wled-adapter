@@ -9,6 +9,7 @@ import fetch from 'node-fetch';
 import {BrightnessProperty} from './brightness-property';
 import {ColorProperty} from './color-property';
 import {OnOffProperty} from './on-off-property';
+import {LiveProperty} from './live-property';
 import {WledDescription} from './wled';
 
 export class WledDevice extends Device {
@@ -17,6 +18,8 @@ export class WledDevice extends Device {
   private brightnessProperty: BrightnessProperty;
 
   private colorProperty: ColorProperty;
+
+  private liveProperty: LiveProperty;
 
   private connected?: boolean;
 
@@ -38,6 +41,8 @@ export class WledDevice extends Device {
     this.addProperty(this.brightnessProperty);
     this.colorProperty = new ColorProperty(this, url);
     this.addProperty(this.colorProperty);
+    this.liveProperty = new LiveProperty(this);
+    this.addProperty(this.liveProperty);
     // eslint-disable-next-line no-undefined
     this.connected = undefined;
     this.intervalMs = 1000;
@@ -52,6 +57,18 @@ export class WledDevice extends Device {
   public connectedNotify(state: boolean): void {
     super.connectedNotify(state);
     this.connected = state;
+  }
+
+  public enterLiveMode(): void {
+    this.brightnessProperty.setReadOnly(true);
+    this.colorProperty.setReadOnly(true);
+    this.getAdapter().handleDeviceAdded(this);
+  }
+
+  public leaveLiveMode(): void {
+    this.brightnessProperty.setReadOnly(false);
+    this.colorProperty.setReadOnly(false);
+    this.getAdapter().handleDeviceAdded(this);
   }
 
   async poll(): Promise<void> {
@@ -83,6 +100,7 @@ export class WledDevice extends Device {
     this.onOffProperty.update(json);
     this.brightnessProperty.update(json);
     this.colorProperty.update(json);
+    this.liveProperty.update(json);
 
     setTimeout(() => this.poll(), this.intervalMs);
   }
