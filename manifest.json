@@ -43,6 +43,9 @@
             "required": [
               "host"
             ],
+            "default": {
+              "port": 80
+            },
             "properties": {
               "host": {
                 "type": "string",
