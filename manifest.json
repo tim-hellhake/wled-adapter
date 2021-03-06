@@ -33,6 +33,27 @@
         "useIpInsteadOfHostname": {
           "type": "boolean",
           "title": "Use the ip address instead of the hostname to contact the device"
+        },
+        "devices": {
+          "type": "array",
+          "title": "List of WLED devices",
+          "items" : {
+            "type": "object",
+            "title": "WLED device",
+            "required": [
+              "host"
+            ],
+            "properties": {
+              "host": {
+                "type": "string",
+                "title": "The ip or hostname of the wled device"
+              },
+              "port": {
+                "type": "number",
+                "title": "The port of the wled device (default is 80)"
+              }
+            }
+          }
         }
       }
     }

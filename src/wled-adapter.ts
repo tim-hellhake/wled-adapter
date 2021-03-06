@@ -10,7 +10,6 @@ import {WledDescription} from './wled';
 import {WledDevice} from './wled-device';
 import {Config} from './config';
 import fetch from 'node-fetch';
-import {MdnsService} from './mdns';
 
 export interface Manifest {
   name: string,
@@ -38,10 +37,42 @@ export class WledAdapter extends Adapter {
   }
 
   public startDiscovery(): void {
+    const {
+      useIpInsteadOfHostname,
+      devices,
+    } = this.config;
+
+    if (devices) {
+      for (const device of devices) {
+        const {
+          host,
+          port,
+        } = device;
+
+        const devicePort = port || 80;
+        console.log(`Adding manual wled device at ${host}:${devicePort}`);
+        this.handleService(host, host, devicePort);
+      }
+    }
+
     this.wledBrowser = new Browser(tcp('wled'));
 
     this.wledBrowser.on('serviceUp', async (service) => {
-      this.handleService(service);
+      const {
+        name,
+        host,
+        port,
+        addresses,
+      } = service;
+
+      let hostname = this.removeTrailingDot(host);
+
+      if (useIpInsteadOfHostname) {
+        hostname = addresses[0];
+      }
+
+      console.log(`Discovered wled service ${name} at ${host}:${port}`);
+      this.handleService(name, hostname, port);
     });
 
     this.wledBrowser.start();
@@ -55,21 +86,10 @@ export class WledAdapter extends Adapter {
     return str;
   }
 
-  private async handleService(service: MdnsService) {
+  private async handleService(name: string, host: string, port: number) {
     const {
       pollInterval,
-      useIpInsteadOfHostname,
     } = this.config;
-
-    const name = service.name;
-    let host = this.removeTrailingDot(service.host);
-
-    if (useIpInsteadOfHostname) {
-      host = service.addresses[0];
-    }
-
-    const port = service.port;
-    console.log(`Discovered wled service ${name} at ${host}:${port}`);
 
     const url = `http://${host}:${port}/json/si`;
 
