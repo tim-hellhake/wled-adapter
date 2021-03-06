@@ -10,6 +10,8 @@ import {BrightnessProperty} from './brightness-property';
 import {ColorProperty} from './color-property';
 import {OnOffProperty} from './on-off-property';
 import {LiveProperty} from './live-property';
+import {TimerProperty} from './timer-property';
+import {SyncProperty} from './sync-property';
 import {WledDescription} from './wled';
 
 export class WledDevice extends Device {
@@ -20,6 +22,10 @@ export class WledDevice extends Device {
   private colorProperty: ColorProperty;
 
   private liveProperty: LiveProperty;
+
+  private timerProperty: TimerProperty;
+
+  private syncProperty: SyncProperty;
 
   private connected?: boolean;
 
@@ -43,6 +49,10 @@ export class WledDevice extends Device {
     this.addProperty(this.colorProperty);
     this.liveProperty = new LiveProperty(this);
     this.addProperty(this.liveProperty);
+    this.timerProperty = new TimerProperty(this, url);
+    this.addProperty(this.timerProperty);
+    this.syncProperty = new SyncProperty(this, url);
+    this.addProperty(this.syncProperty);
     // eslint-disable-next-line no-undefined
     this.connected = undefined;
     this.intervalMs = 1000;
@@ -62,12 +72,16 @@ export class WledDevice extends Device {
   public enterLiveMode(): void {
     this.brightnessProperty.setReadOnly(true);
     this.colorProperty.setReadOnly(true);
+    this.timerProperty.setReadOnly(true);
+    this.syncProperty.setReadOnly(true);
     this.getAdapter().handleDeviceAdded(this);
   }
 
   public leaveLiveMode(): void {
     this.brightnessProperty.setReadOnly(false);
     this.colorProperty.setReadOnly(false);
+    this.timerProperty.setReadOnly(false);
+    this.syncProperty.setReadOnly(false);
     this.getAdapter().handleDeviceAdded(this);
   }
 
@@ -101,6 +115,8 @@ export class WledDevice extends Device {
     this.brightnessProperty.update(json);
     this.colorProperty.update(json);
     this.liveProperty.update(json);
+    this.timerProperty.update(json);
+    this.syncProperty.update(json);
 
     setTimeout(() => this.poll(), this.intervalMs);
   }
