@@ -7,6 +7,8 @@
 export interface WledDescription {
   state: State;
   info: Info;
+  effects: [string],
+  palettes: [string],
 }
 
 export interface State {
