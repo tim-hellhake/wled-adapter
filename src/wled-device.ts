@@ -18,6 +18,10 @@ export class WledDevice extends Device {
 
   private colorProperty: ColorProperty;
 
+  private connected?: boolean;
+
+  private intervalMs?: number;
+
   constructor(
     adapter: Adapter,
     id: string,
@@ -34,17 +38,52 @@ export class WledDevice extends Device {
     this.addProperty(this.brightnessProperty);
     this.colorProperty = new ColorProperty(this, url);
     this.addProperty(this.colorProperty);
+    // eslint-disable-next-line no-undefined
+    this.connected = undefined;
+    this.intervalMs = 1000;
   }
 
   public startPolling(intervalMs: number): void {
-    setInterval(() => this.poll(), intervalMs);
+    this.connectedNotify(true);
+    this.intervalMs = intervalMs;
+    setTimeout(() => this.poll(), intervalMs);
+  }
+
+  public connectedNotify(state: boolean): void {
+    super.connectedNotify(state);
+    this.connected = state;
   }
 
   async poll(): Promise<void> {
-    const response = await fetch(this.url);
-    const json: WledDescription = await response.json();
+    let json: WledDescription;
+
+    try {
+      const response = await fetch(this.url);
+      json = await response.json();
+
+      if (json === null) {
+        setTimeout(() => this.poll(), this.intervalMs);
+        return;
+      }
+
+      if (this.connected === false) {
+        console.error('Reconnected');
+        this.connectedNotify(true);
+      }
+    } catch (ex) {
+      if (this.connected === true) {
+        console.error('Communication error: ', ex, '\nI will keep retrying!');
+        this.connectedNotify(false);
+      }
+
+      setTimeout(() => this.poll(), this.intervalMs);
+      return;
+    }
+
     this.onOffProperty.update(json);
     this.brightnessProperty.update(json);
     this.colorProperty.update(json);
+
+    setTimeout(() => this.poll(), this.intervalMs);
   }
 }
