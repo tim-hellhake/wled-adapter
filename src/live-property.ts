@@ -4,15 +4,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 
-import {Device, Property} from 'gateway-addon';
+import {Property} from 'gateway-addon';
 import {WledDescription} from './wled';
 import {WledDevice} from './wled-device';
 
 export class LiveProperty extends Property<boolean> {
 
   // eslint-disable-next-line no-unused-vars
-  constructor(device: Device) {
-    super(device, 'live', {
+  constructor(private wledDevice: WledDevice) {
+    super(wledDevice, 'live', {
       type: 'boolean',
       title: 'Live?',
       readOnly: true,
@@ -23,9 +23,9 @@ export class LiveProperty extends Property<boolean> {
     const live = wledDescription.info.live;
     const oldLive = await this.getValue();
     if (live && !oldLive) {
-      (this.getDevice() as WledDevice).enterLiveMode();
+      this.wledDevice.enterLiveMode();
     } else if (!live && oldLive) {
-      (this.getDevice() as WledDevice).leaveLiveMode();
+      this.wledDevice.leaveLiveMode();
     }
     this.setCachedValueAndNotify(live);
   }
