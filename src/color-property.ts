@@ -26,9 +26,7 @@ export class ColorProperty extends Property<string> {
     ];
 
     const body = {
-      value,
-      seg: {col: [[...components, '0'], [], []]},
-      transition: 7,
+      seg: {col: [components, [], []]},
       v: true,
     };
 

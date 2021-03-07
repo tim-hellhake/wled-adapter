@@ -21,7 +21,6 @@ export class OnOffProperty extends Property<boolean> {
   async setValue(value: boolean): Promise<boolean> {
     const body = {
       on: value,
-      transition: 7,
       v: true,
     };
 

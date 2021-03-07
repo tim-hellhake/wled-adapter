@@ -23,7 +23,6 @@ export class BrightnessProperty extends Property<number> {
   async setValue(value: number): Promise<number> {
     const body = {
       bri: Math.round(value / 100 * 255),
-      transition: 7,
       v: true,
     };
 
