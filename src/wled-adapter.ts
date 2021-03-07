@@ -97,7 +97,7 @@ export class WledAdapter extends Adapter {
       const wledDevice = new WledDevice(this, name, `${url}/si`, json);
       this.handleDeviceAdded(wledDevice);
       console.log('Added WLED device', name);
-      wledDevice.startPolling((pollInterval || 1000));
+      wledDevice.startPolling(pollInterval || 1000);
     });
   }
 
