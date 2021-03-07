@@ -91,10 +91,10 @@ export class WledAdapter extends Adapter {
       pollInterval,
     } = this.config;
 
-    const url = `http://${host}:${port}/json`;
+    const url = `http://${host}:${port}`;
 
-    this.getWledDescription(url, (json: WledDescription) => {
-      const wledDevice = new WledDevice(this, name, `${url}/si`, json);
+    this.getWledDescription(`${url}/json`, (json: WledDescription) => {
+      const wledDevice = new WledDevice(this, name, url, json);
       this.handleDeviceAdded(wledDevice);
       console.log('Added WLED device', name);
       wledDevice.startPolling(pollInterval || 1000);
