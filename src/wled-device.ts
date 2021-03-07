@@ -133,26 +133,23 @@ export class WledDevice extends Device {
         console.error('Reconnected');
         this.connectedNotify(true);
       }
+
+      this.onOffProperty.update(json);
+      this.brightnessProperty.update(json);
+      this.colorProperty.update(json);
+      this.liveProperty.update(json);
+      this.timerProperty.update(json);
+      this.syncProperty.update(json);
+      this.effectProperty.update(json);
+      this.paletteProperty.update(json);
+      this.effectSpeedProperty.update(json);
+      this.effectIntensityProperty.update(json);
     } catch (ex) {
       if (this.connected === true) {
         console.error('Communication error: ', ex, '\nI will keep retrying!');
         this.connectedNotify(false);
       }
-
-      setTimeout(() => this.poll(), this.intervalMs);
-      return;
     }
-
-    this.onOffProperty.update(json);
-    this.brightnessProperty.update(json);
-    this.colorProperty.update(json);
-    this.liveProperty.update(json);
-    this.timerProperty.update(json);
-    this.syncProperty.update(json);
-    this.effectProperty.update(json);
-    this.paletteProperty.update(json);
-    this.effectSpeedProperty.update(json);
-    this.effectIntensityProperty.update(json);
 
     setTimeout(() => this.poll(), this.intervalMs);
   }
