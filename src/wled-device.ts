@@ -41,7 +41,7 @@ export class WledDevice extends Device {
 
   private connected?: boolean;
 
-  private intervalMs?: number;
+  private intervalMs: number;
 
   constructor(
     adapter: Adapter,
