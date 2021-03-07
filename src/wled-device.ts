@@ -14,6 +14,8 @@ import {TimerProperty} from './timer-property';
 import {SyncProperty} from './sync-property';
 import {EffectProperty} from './effect-property';
 import {PaletteProperty} from './palette-property';
+import {EffectSpeedProperty} from './effect-speed-property';
+import {EffectIntensityProperty} from './effect-intensity-property';
 import {WledDescription} from './wled';
 
 export class WledDevice extends Device {
@@ -32,6 +34,10 @@ export class WledDevice extends Device {
   private effectProperty: EffectProperty;
 
   private paletteProperty: PaletteProperty;
+
+  private effectSpeedProperty: EffectSpeedProperty;
+
+  private effectIntensityProperty: EffectIntensityProperty;
 
   private connected?: boolean;
 
@@ -67,6 +73,10 @@ export class WledDevice extends Device {
       this, url, wledDescription.palettes
     );
     this.addProperty(this.paletteProperty);
+    this.effectSpeedProperty = new EffectSpeedProperty(this, url);
+    this.addProperty(this.effectSpeedProperty);
+    this.effectIntensityProperty = new EffectIntensityProperty(this, url);
+    this.addProperty(this.effectIntensityProperty);
     // eslint-disable-next-line no-undefined
     this.connected = undefined;
     this.intervalMs = 1000;
@@ -90,6 +100,8 @@ export class WledDevice extends Device {
     this.syncProperty.setReadOnly(true);
     this.effectProperty.setReadOnly(true);
     this.paletteProperty.setReadOnly(true);
+    this.effectSpeedProperty.setReadOnly(true);
+    this.effectIntensityProperty.setReadOnly(true);
     this.getAdapter().handleDeviceAdded(this);
   }
 
@@ -100,6 +112,8 @@ export class WledDevice extends Device {
     this.syncProperty.setReadOnly(false);
     this.effectProperty.setReadOnly(false);
     this.paletteProperty.setReadOnly(false);
+    this.effectSpeedProperty.setReadOnly(false);
+    this.effectIntensityProperty.setReadOnly(false);
     this.getAdapter().handleDeviceAdded(this);
   }
 
@@ -137,6 +151,8 @@ export class WledDevice extends Device {
     this.syncProperty.update(json);
     this.effectProperty.update(json);
     this.paletteProperty.update(json);
+    this.effectSpeedProperty.update(json);
+    this.effectIntensityProperty.update(json);
 
     setTimeout(() => this.poll(), this.intervalMs);
   }
