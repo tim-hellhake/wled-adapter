@@ -77,8 +77,6 @@ export class WledDevice extends Device {
     this.addProperty(this.effectSpeedProperty);
     this.effectIntensityProperty = new EffectIntensityProperty(this, url);
     this.addProperty(this.effectIntensityProperty);
-    // eslint-disable-next-line no-undefined
-    this.connected = undefined;
     this.intervalMs = 1000;
   }
 
