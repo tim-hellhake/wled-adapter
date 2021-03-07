@@ -8,19 +8,20 @@ import {Device, Property} from 'gateway-addon';
 import fetch from 'node-fetch';
 import {WledDescription} from './wled';
 
-export class OnOffProperty extends Property<boolean> {
+export class EffectProperty extends Property<string> {
+
   // eslint-disable-next-line no-unused-vars
-  constructor(device: Device, private url: string) {
-    super(device, 'on', {
-      '@type': 'OnOffProperty',
-      type: 'boolean',
-      title: 'On',
+  constructor(device: Device, private url: string, private effects: [string]) {
+    super(device, 'effect', {
+      type: 'string',
+      title: 'Effect',
+      enum: effects,
     });
   }
 
-  async setValue(value: boolean): Promise<boolean> {
+  async setValue(value: string): Promise<string> {
     const body = {
-      on: value,
+      seg: {fx: this.effects.indexOf(value)},
       v: true,
     };
 
@@ -37,8 +38,8 @@ export class OnOffProperty extends Property<boolean> {
     return super.setValue(value);
   }
 
-  update(wledDescription: WledDescription): void {
-    const on = wledDescription.state.on;
-    this.setCachedValueAndNotify(on);
+  async update(wledDescription: WledDescription): Promise<void> {
+    const effect = wledDescription.state.seg[0].fx;
+    this.setCachedValueAndNotify(this.effects[effect]);
   }
 }

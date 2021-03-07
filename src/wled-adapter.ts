@@ -91,14 +91,40 @@ export class WledAdapter extends Adapter {
       pollInterval,
     } = this.config;
 
-    const url = `http://${host}:${port}/json/si`;
+    const url = `http://${host}:${port}/json`;
 
-    const response = await fetch(url);
-    const json: WledDescription = await response.json();
+    this.getWledDescription(url, (json: WledDescription) => {
+      const wledDevice = new WledDevice(this, name, `${url}/si`, json);
+      this.handleDeviceAdded(wledDevice);
+      console.log('Added WLED device', name);
+      wledDevice.startPolling(pollInterval || 1000);
+    });
+  }
 
-    const wledDevice = new WledDevice(this, name, url, json);
-    this.handleDeviceAdded(wledDevice);
-    wledDevice.startPolling((pollInterval || 1000));
+  private async getWledDescription(
+    url: string,
+    cb: (_json: WledDescription) => void,
+    firstTry = true
+  ) {
+    try {
+      const response = await fetch(url);
+      const json: WledDescription = await response.json();
+
+      cb(json);
+    } catch (ex) {
+      if (firstTry) {
+        console.error('Communication error: ', ex, '\nI will keep retrying!');
+      }
+
+      const {
+        pollInterval,
+      } = this.config;
+
+      setTimeout(
+        this.getWledDescription.bind(this, url, cb, false),
+        (pollInterval || 10000)
+      );
+    }
   }
 
   public cancelPairing(): void {

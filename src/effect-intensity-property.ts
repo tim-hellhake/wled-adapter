@@ -8,19 +8,21 @@ import {Device, Property} from 'gateway-addon';
 import fetch from 'node-fetch';
 import {WledDescription} from './wled';
 
-export class OnOffProperty extends Property<boolean> {
+export class EffectIntensityProperty extends Property<number> {
   // eslint-disable-next-line no-unused-vars
   constructor(device: Device, private url: string) {
-    super(device, 'on', {
-      '@type': 'OnOffProperty',
-      type: 'boolean',
-      title: 'On',
+    super(device, 'effect-intensity', {
+      '@type': 'LevelProperty',
+      type: 'integer',
+      title: 'Effect intensity',
+      minimum: 0,
+      maximum: 100,
     });
   }
 
-  async setValue(value: boolean): Promise<boolean> {
+  async setValue(value: number): Promise<number> {
     const body = {
-      on: value,
+      seg: {ix: Math.round(value / 100 * 255)},
       v: true,
     };
 
@@ -38,7 +40,7 @@ export class OnOffProperty extends Property<boolean> {
   }
 
   update(wledDescription: WledDescription): void {
-    const on = wledDescription.state.on;
-    this.setCachedValueAndNotify(on);
+    const intensity = wledDescription.state.seg[0].ix;
+    this.setCachedValueAndNotify(Math.round(intensity / 255 * 100));
   }
 }
