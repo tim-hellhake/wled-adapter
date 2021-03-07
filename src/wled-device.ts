@@ -43,39 +43,52 @@ export class WledDevice extends Device {
 
   private intervalMs: number;
 
+  private apiUrl: string;
+
   constructor(
     adapter: Adapter,
     id: string,
-    private url: string,
+    url: string,
     wledDescription: WledDescription) {
     super(adapter, id);
     this['@context'] = 'https://iot.mozilla.org/schemas/';
     this['@type'] = ['Light'];
     this.setTitle(wledDescription.info.name);
+    this.apiUrl = `${url}/json/si`;
 
-    this.onOffProperty = new OnOffProperty(this, url);
+    (this as any).links.push({
+      rel: 'alternate',
+      mediaType: 'text/html',
+      href: url,
+    });
+
+    this.onOffProperty = new OnOffProperty(this, this.apiUrl);
     this.addProperty(this.onOffProperty);
-    this.brightnessProperty = new BrightnessProperty(this, url);
+    this.brightnessProperty = new BrightnessProperty(this, this.apiUrl);
     this.addProperty(this.brightnessProperty);
-    this.colorProperty = new ColorProperty(this, url);
+    this.colorProperty = new ColorProperty(this, this.apiUrl);
     this.addProperty(this.colorProperty);
     this.liveProperty = new LiveProperty(this);
     this.addProperty(this.liveProperty);
-    this.timerProperty = new TimerProperty(this, url);
+    this.timerProperty = new TimerProperty(this, this.apiUrl);
     this.addProperty(this.timerProperty);
-    this.syncProperty = new SyncProperty(this, url);
+    this.syncProperty = new SyncProperty(this, this.apiUrl);
     this.addProperty(this.syncProperty);
     this.effectProperty = new EffectProperty(
-      this, url, wledDescription.effects
+      this, this.apiUrl, wledDescription.effects
     );
     this.addProperty(this.effectProperty);
     this.paletteProperty = new PaletteProperty(
-      this, url, wledDescription.palettes
+      this, this.apiUrl, wledDescription.palettes
     );
     this.addProperty(this.paletteProperty);
-    this.effectSpeedProperty = new EffectSpeedProperty(this, url);
+    this.effectSpeedProperty = new EffectSpeedProperty(
+      this, this.apiUrl
+    );
     this.addProperty(this.effectSpeedProperty);
-    this.effectIntensityProperty = new EffectIntensityProperty(this, url);
+    this.effectIntensityProperty = new EffectIntensityProperty(
+      this, this.apiUrl
+    );
     this.addProperty(this.effectIntensityProperty);
     this.intervalMs = 1000;
   }
@@ -119,7 +132,7 @@ export class WledDevice extends Device {
     let json: WledDescription;
 
     try {
-      const response = await fetch(this.url);
+      const response = await fetch(this.apiUrl);
       json = await response.json();
 
       if (json === null) {
