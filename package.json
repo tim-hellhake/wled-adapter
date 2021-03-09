@@ -1,7 +1,7 @@
 {
   "name": "wled-adapter",
   "display_name": "WLED",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Connect your WLED (https://github.com/Aircoookie/WLED) devices",
   "main": "lib/index.js",
   "scripts": {

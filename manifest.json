@@ -3,7 +3,7 @@
   "id": "wled-adapter",
   "name": "WLED",
   "short_name": "WLED",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Connect your WLED (https://github.com/Aircoookie/WLED) lights",
   "homepage_url": "https://github.com/tim-hellhake/wled-adapter#readme",
   "license": "MPL-2.0",
@@ -37,7 +37,7 @@
         "devices": {
           "type": "array",
           "title": "List of WLED devices",
-          "items" : {
+          "items": {
             "type": "object",
             "title": "WLED device",
             "required": [
